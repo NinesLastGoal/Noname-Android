@@ -1,70 +1,69 @@
-🕵️ Recon Checklist for No‑Name Android Radios
-1. Gather System Info
-About Device screen
+# No-Name Android Radio Recon Guide
 
-Note the Build number / Build ID (often looks like YT9216B_00002_V001 or 8227L_demo).
+## 1. System Information
 
-Record the Android version and Kernel version.
+### Device Settings
+- Record Build number/ID (examples: `YT9216B_00002_V001`, `8227L_demo`)
+- Record Android version and Kernel version
 
-CPU‑Z or AIDA64 (install via APK)
+### Hardware Info (CPU-Z or AIDA64)
+- Identify SoC: Allwinner T3, Rockchip PX30, Mediatek 8227L, etc.
+- Check RAM size
+- Check storage type (NAND or eMMC)
 
-Identify the SoC (Allwinner T3, Rockchip PX30, Mediatek 8227L, etc.).
+## 2. Board Identification
 
-Check RAM size and storage type (NAND vs eMMC).
+Physical inspection of PCB silkscreen. Common board IDs:
+- YT9216B, YT9217
+- 8227L, AC8227L
+- PX30, PX5, PX6
 
-2. Identify the Board
-Pull the unit and look at the silkscreen on the PCB. Common IDs:
+## 3. Firmware Details
 
-YT9216B, YT9217, 8227L, AC8227L, PX30, PX5, PX6.
+### Service Codes
+Dial `*#*#2846579#*#*` (varies by unit) for hidden menus.
 
-Photograph the board for reference—community forums love visual confirmation.
-
-3. Extract Firmware Details
-In Android, dial *#*#2846579#*#* or similar service codes (varies by unit) to access hidden menus.
-
-Use adb shell (enable Developer Options → USB Debugging) and run:
-
-bash
+### ADB Commands
+Enable Developer Options → USB Debugging, then run:
+```bash
 adb shell getprop | grep ro.build
 adb shell cat /proc/cpuinfo
-This gives you the exact build fingerprint and CPU family.
+```
 
-4. Match to Firmware Families
-8227L / YT9216B → Tons of GitHub/XDA resources (patched ROMs, TWRP, root).
+## 4. Firmware Family Reference
 
-Allwinner T3 / T8 → PhoenixSuit flashing tools, firmware dumps on 4PDA/XDA.
+| Platform | Tools | Resources |
+|----------|-------|-----------|
+| 8227L / YT9216B | SP Flash Tool | GitHub/XDA (ROMs, TWRP, root) |
+| Allwinner T3/T8 | PhoenixSuit | 4PDA/XDA firmware dumps |
+| Rockchip PX | Rockchip Batch Tool / AndroidTool | XDA forums |
+| XYAuto / FYAuto | - | XYGala server (user: `Xyauto` / pass: `123456`) |
 
-Rockchip PX series → Rockchip Batch Tool or AndroidTool, more “premium” units.
+## 5. Backup Procedure
 
-XYAuto / FYAuto → Firmware hosted on XYGala server (login: Xyauto / 123456).
+### Critical Partitions
+```bash
+adb pull /system
+adb pull /vendor
+adb pull /boot
+```
 
-5. Backup Before Anything
-Use adb pull to grab /system, /vendor, and /boot partitions.
+### Full Dump
+Use platform-specific tools:
+- **Mediatek**: SP Flash Tool
+- **Rockchip**: AndroidTool
 
-If possible, dump the entire NAND/eMMC with SP Flash Tool or Rockchip AndroidTool.
+## 6. Required Tools
 
-This is your “lifeline” if a flash goes sideways.
+- ADB + Fastboot
+- SP Flash Tool (Mediatek)
+- PhoenixSuit (Allwinner)
+- Rockchip AndroidTool (PX series)
+- USB OTG cable + USB stick
+- UART adapter (recovery)
 
-6. Community Cross‑Check
-Post your Build ID + board photos on XDA’s Android Head Unit forum.
+## 7. Research Resources
 
-Search GitHub with your Build ID (e.g. YT9216B site:github.com).
-
-Compare your findings with firmware packages—exact match is critical.
-
-⚡ Tools to Have Ready
-ADB + Fastboot (basic Android debugging).
-
-SP Flash Tool (for Mediatek).
-
-PhoenixSuit (for Allwinner).
-
-Rockchip AndroidTool (for PX series).
-
-USB OTG cable and a known‑good USB stick (for update.zip installs).
-
-Multimeter / UART adapter (for recovery if bricked).
-
-This checklist will get you from “mystery box” to “I know exactly which firmware family I’m dealing with.” Once you’ve nailed that, we can dive into the actual flashing workflow and whether there are patched ROMs that bump your Android version.
-
-Do you want me to sketch out a decision tree—like “If it’s 8227L → go here, if it’s Allwinner → use this tool, if it’s Rockchip → follow this path”—so you’ve got a visual map of the upgrade routes?
+- XDA Android Head Unit forum
+- GitHub search: `[Build_ID] site:github.com`
+- Match Build ID to firmware packages exactly
